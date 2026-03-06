@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "853tyMJDl+M=",
+  "success": true,
+  "projectFilePath": "D:\\Work\\GitHub\\Quest_PDF_Testing\\Quest_PDF_Testing\\Quest_PDF_Testing.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\mateihojda\\.nuget\\packages\\questpdf\\2026.2.2\\questpdf.2026.2.2.nupkg.sha512"
+  ],
+  "logs": []
+}

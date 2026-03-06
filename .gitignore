@@ -1,0 +1,11 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/Quest_PDF_Testing/.vs
+/hello.pdf
+/hello_MC.pdf
+/hello_TestItems_V1.pdf
+/hello_TestItems_V2.pdf
+/hello_TestItems_V3.pdf
+/hello_TestItems_V5.pdf
