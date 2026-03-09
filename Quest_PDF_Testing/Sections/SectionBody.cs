@@ -1,87 +1,57 @@
-﻿using Quest_PDF_Testing.Models;
-using QuestPDF.Elements;
+﻿using Quest_PDF_Testing.Helpers;
+using Quest_PDF_Testing.Models;
 using QuestPDF.Fluent;
 using QuestPDF.Infrastructure;
 
 namespace Quest_PDF_Testing.Sections
 {
-    public class SectionBody : IDynamicComponent
+    public class SectionBody : IComponent
     {
         public BodyItem Body { get; set; }
         public bool IsHalfPageOnly { get; set; } = false;
+        public bool ShouldKeepContentOnSamePage { get; set; } = false;
+        public SectionAnchor Position { get; set; } = SectionAnchor.FullWidth;
 
         public SectionBody()
         {
             Body = new BodyItem();
         }
 
-        public DynamicComponentComposeResult Compose(DynamicContext context)
+        public void Compose(IContainer container)
         {
-            var content = context.CreateElement(element =>
+            container.ShowEntireIf(ShouldKeepContentOnSamePage).PaddingBottom(Constants.PADDING_15).Column(column =>
             {
-                var halfPageWidth = context.AvailableSize.Width / 2;
+                column.Item().PaddingBottom(Constants.PADDING_2).Text(Body.Title).FontSize(Constants.TITLE_FONT_SIZE_30).FontColor(Color.FromHex(Constants.RED_COLOR_HEX));
+                
+                var keyValuePairs = Body.KeyValuePair.Where(item => item.IsDisplayed).ToList();
                 if (IsHalfPageOnly)
                 {
-                    element.MaxWidth(halfPageWidth).Column(column =>
-                    {
-                        column.Item().PaddingBottom(Constants.PADDING_2).Text(Body.Title).FontSize(Constants.TITLE_FONT_SIZE_35).FontColor(Color.FromHex(Constants.RED_COLOR_HEX));
-                        foreach (KeyValueItem keyValueItem in Body.KeyValuePair)
-                        {
-                            if (keyValueItem.IsDisplayed)
-                            {
-                                column.Item().PaddingTop(Constants.PADDING_2).Row(pairRow =>
-                                {
-                                    pairRow.RelativeItem(1).Text(keyValueItem.Key).FontSize(Constants.TEXT_FONT_SIZE_10).FontColor(Constants.GRAY_COLOR_HEX_2);
-                                    pairRow.RelativeItem(2).Text(keyValueItem.Value).FontSize(Constants.TEXT_FONT_SIZE_10);
-                                });
-                            }
-                        }
-                    });
+                    column.Item().EnsureSpace().Element(c => RenderKeyValuePairs(c, keyValuePairs));
                 }
                 else
                 {
-                    element.Column(column =>
+                    column.Item().EnsureSpace().Row(row =>
                     {
-                        column.Item().PaddingBottom(Constants.PADDING_2).Text(Body.Title).FontSize(Constants.TITLE_FONT_SIZE_35).FontColor(Color.FromHex(Constants.RED_COLOR_HEX));
-                        column.Item().Row(row =>
-                        {
-                            row.RelativeItem().Column(innerColumn =>
-                            {
-                                foreach (KeyValueItem keyValueItem in Body.KeyValuePair.Take(Body.KeyValuePair.Count / 2))
-                                {
-                                    if (keyValueItem.IsDisplayed) { 
-                                        innerColumn.Item().PaddingTop(Constants.PADDING_2).Row(pairRow =>
-                                        {
-                                            pairRow.RelativeItem(1).Text(keyValueItem.Key).FontSize(Constants.TEXT_FONT_SIZE_10).FontColor(Constants.GRAY_COLOR_HEX_2);
-                                            pairRow.RelativeItem(2).Text(keyValueItem.Value).FontSize(Constants.TEXT_FONT_SIZE_10);
-                                        });
-                                    }
-                                }
-                            });
-                            row.RelativeItem().Column(innerColumn =>
-                            {
-                                foreach (KeyValueItem keyValueItem in Body.KeyValuePair.Skip(Body.KeyValuePair.Count / 2))
-                                {
-                                    if (keyValueItem.IsDisplayed)
-                                    {
-                                        innerColumn.Item().PaddingTop(Constants.PADDING_2).Row(pairRow =>
-                                        {
-                                            pairRow.RelativeItem(1).Text(keyValueItem.Key).FontSize(Constants.TEXT_FONT_SIZE_10).FontColor(Constants.GRAY_COLOR_HEX_2);
-                                            pairRow.RelativeItem(2).Text(keyValueItem.Value).FontSize(Constants.TEXT_FONT_SIZE_10);
-                                        });
-                                    }
-                                }
-                            });
-                        });
+                        row.RelativeItem(1).Element(c => RenderKeyValuePairs(c, keyValuePairs.Take(keyValuePairs.Count / 2)));
+                        row.RelativeItem(1).Element(c => RenderKeyValuePairs(c, keyValuePairs.Skip(keyValuePairs.Count / 2)));
                     });
                 }
             });
+        }
 
-            return new DynamicComponentComposeResult
+        private static void RenderKeyValuePairs(IContainer container, IEnumerable<KeyValueItem> keyValuePairs)
+        {
+            container.Column(column =>
             {
-                Content = content,
-                HasMoreContent = false
-            };
+                foreach (var keyValueItem in keyValuePairs)
+                {
+                    column.Item().PaddingTop(Constants.PADDING_2).Row(pairRow =>
+                    {
+                        pairRow.RelativeItem(1).Text(keyValueItem.Key).FontSize(Constants.TEXT_FONT_SIZE_10).FontColor(Constants.GRAY_COLOR_HEX_2);
+                        pairRow.RelativeItem(2).Text(keyValueItem.Value).FontSize(Constants.TEXT_FONT_SIZE_10);
+                    });
+                }
+            });
         }
     }
 }

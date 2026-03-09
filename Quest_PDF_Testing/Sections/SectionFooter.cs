@@ -1,4 +1,5 @@
-﻿using Quest_PDF_Testing.Models;
+﻿using Quest_PDF_Testing.Helpers;
+using Quest_PDF_Testing.Models;
 using QuestPDF.Fluent;
 using QuestPDF.Infrastructure;
 

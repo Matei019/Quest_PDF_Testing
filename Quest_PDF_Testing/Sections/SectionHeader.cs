@@ -1,4 +1,5 @@
-﻿using Quest_PDF_Testing.Models;
+﻿using Quest_PDF_Testing.Helpers;
+using Quest_PDF_Testing.Models;
 using QuestPDF.Fluent;
 using QuestPDF.Infrastructure;
 
@@ -15,7 +16,7 @@ namespace Quest_PDF_Testing.Sections
 
         public void Compose(IContainer container)
         {
-            container.PaddingBottom(Constants.HALF_POINT_PADDING, Unit.Centimetre).Column(column =>
+            container.PaddingBottom(Constants.PADDING_1, Unit.Centimetre).Column(column =>
             {
                 column.Item().Layers(layers =>
                 {
