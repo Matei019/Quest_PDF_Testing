@@ -8,14 +8,16 @@ using Quest_PDF_Testing.Helpers;
 // set your license here:
 QuestPDF.Settings.License = LicenseType.Community;
 
-List<SectionBody> sections =
+List<PlacedSection> sections =
 [
-    BuildBodySection1(false, true, SectionAnchor.FullWidth),
-    BuildBodySection2(true, true, SectionAnchor.Left),
-    BuildBodySection3(true, true, SectionAnchor.Right),
-    BuildBodySection4(true, false, SectionAnchor.Left),
-    BuildBodySection3(false, false, SectionAnchor.FullWidth),
-    BuildBodySection2(true, false, SectionAnchor.Right)
+    new PlacedSection { Component = BuildTitleSection() },
+    new PlacedSection { Component = BuildBodySection1(false, true, ContentView.GridView), Anchor = SectionAnchor.FullWidth },
+    new PlacedSection { Component = BuildBodySection2(isHalfPageOnly: true, shouldKeepContentOnSamePage: true), Anchor = SectionAnchor.Left},
+    new PlacedSection { Component = BuildBodySection3(isHalfPageOnly: true, shouldKeepContentOnSamePage: true), Anchor = SectionAnchor.Right },
+    new PlacedSection { Component = BuildBodySection4(isHalfPageOnly: true, shouldKeepContentOnSamePage: false), Anchor = SectionAnchor.Left },
+    new PlacedSection { Component = BuildBodySection3(isHalfPageOnly: false, shouldKeepContentOnSamePage: false, view: ContentView.ListView),
+                        Anchor = SectionAnchor.FullWidth },
+    new PlacedSection { Component = BuildBodySection2(isHalfPageOnly: true, shouldKeepContentOnSamePage: false), Anchor = SectionAnchor.Right }
 ];
 int sectionsSize = sections.Count;
 
@@ -32,46 +34,51 @@ Document.Create(container =>
 
         page.Content().Column(column =>
         {
-            column.Item().Component(BuildTitleSection());
-            for (int i = 0; i < sectionsSize; i++)
+            List<PlacedSection> halfPageSections = [];
+            foreach (var section in sections)
             {
-                if (sections[i].Position == SectionAnchor.FullWidth)
+                bool coversFullPageWidth = section.Component is SectionTitle || section.Anchor == SectionAnchor.FullWidth;
+                if (coversFullPageWidth)
                 {
-                    column.Item().Component(sections[i]);
-                    continue;
+                    column.Item().Element(c => RenderHalfPageComponents(c, halfPageSections));
+                    column.Item().Component(section.Component);
                 }
-
-                column.Item().Row(row =>
-                {
-                    row.RelativeItem().Column(leftColumn =>
-                    {
-                        int j = i;
-                        while (i < sectionsSize && sections[i].Position != SectionAnchor.FullWidth)
-                        {
-                            if (sections[i].Position == SectionAnchor.Left)
-                                leftColumn.Item().Component(sections[i]);
-                            i++;
-                        }
-                        i = j;
-                    });
-
-                    row.RelativeItem().Column(rightColumn =>
-                    {
-                        while (i < sectionsSize && sections[i].Position != SectionAnchor.FullWidth)
-                        {
-                            if (sections[i].Position == SectionAnchor.Right)
-                                rightColumn.Item().Component(sections[i]);
-                            i++;
-                        }
-                        i--;
-                    });
-                });
+                else
+                    halfPageSections.Add(section);
             }
-        });
 
+            column.Item().Element(c => RenderHalfPageComponents(c, halfPageSections));
+        });
     });
 })
 .GeneratePdfAndShow();
+
+
+static void RenderHalfPageComponents(IContainer container, List<PlacedSection> sections)
+{
+    if (sections.Count == 0)
+        return;
+
+    container.Column(column =>
+    {
+        column.Item().Row(row =>
+        {
+            row.RelativeItem().Column(leftColumn =>
+            {
+                foreach (PlacedSection leftSection in sections.Where(section => section.Anchor == SectionAnchor.Left))
+                    leftColumn.Item().Component(leftSection.Component);
+            });
+
+            row.RelativeItem().Column(rightColumn =>
+            {
+                foreach (PlacedSection rightSection in sections.Where(section => section.Anchor == SectionAnchor.Right))
+                    rightColumn.Item().Component(rightSection.Component);
+            });
+        });
+    });
+
+    sections.Clear();
+}
 
 static IComponent BuildTitleSection()
 {
@@ -93,7 +100,7 @@ static IComponent BuildTitleSection()
     return section;
 }
 
-static SectionBody BuildBodySection1(bool isHalfPageOnly, bool shouldKeepContentOnSamePage, SectionAnchor anchor)
+static IComponent BuildBodySection1(bool isHalfPageOnly, bool shouldKeepContentOnSamePage, ContentView view = ContentView.ListView)
 {
     BodyItem bodyItem = new()
     {
@@ -120,13 +127,13 @@ static SectionBody BuildBodySection1(bool isHalfPageOnly, bool shouldKeepContent
         Body = bodyItem,
         IsHalfPageOnly = isHalfPageOnly,
         ShouldKeepContentOnSamePage = shouldKeepContentOnSamePage,
-        Position = anchor
+        View = view
     };
 
     return section;
 }
 
-static SectionBody BuildBodySection2(bool isHalfPageOnly, bool shouldKeepContentOnSamePage, SectionAnchor anchor)
+static IComponent BuildBodySection2(bool isHalfPageOnly, bool shouldKeepContentOnSamePage, ContentView view = ContentView.ListView)
 {
     BodyItem bodyItem = new()
     {
@@ -153,13 +160,13 @@ static SectionBody BuildBodySection2(bool isHalfPageOnly, bool shouldKeepContent
         Body = bodyItem,
         IsHalfPageOnly = isHalfPageOnly,
         ShouldKeepContentOnSamePage = shouldKeepContentOnSamePage,
-        Position = anchor
+        View = view
     };
 
     return section;
 }
 
-static SectionBody BuildBodySection3(bool isHalfPageOnly, bool shouldKeepContentOnSamePage, SectionAnchor anchor)
+static IComponent BuildBodySection3(bool isHalfPageOnly, bool shouldKeepContentOnSamePage, ContentView view = ContentView.ListView)
 {
     BodyItem bodyItem = new()
     {
@@ -185,13 +192,13 @@ static SectionBody BuildBodySection3(bool isHalfPageOnly, bool shouldKeepContent
         Body = bodyItem,
         IsHalfPageOnly = isHalfPageOnly,
         ShouldKeepContentOnSamePage = shouldKeepContentOnSamePage,
-        Position = anchor
+        View = view
     };
 
     return section;
 }
 
-static SectionBody BuildBodySection4(bool isHalfPageOnly, bool shouldKeepContentOnSamePage, SectionAnchor anchor)
+static IComponent BuildBodySection4(bool isHalfPageOnly, bool shouldKeepContentOnSamePage, ContentView view = ContentView.ListView)
 {
     BodyItem bodyItem = new()
     {
@@ -218,7 +225,7 @@ static SectionBody BuildBodySection4(bool isHalfPageOnly, bool shouldKeepContent
         Body = bodyItem,
         IsHalfPageOnly = isHalfPageOnly,
         ShouldKeepContentOnSamePage = shouldKeepContentOnSamePage,
-        Position = anchor
+        View = view
     };
 
     return section;

@@ -10,7 +10,7 @@ namespace Quest_PDF_Testing.Sections
         public BodyItem Body { get; set; }
         public bool IsHalfPageOnly { get; set; } = false;
         public bool ShouldKeepContentOnSamePage { get; set; } = false;
-        public SectionAnchor Position { get; set; } = SectionAnchor.FullWidth;
+        public ContentView View { get; set; } = ContentView.ListView;
 
         public SectionBody()
         {
@@ -24,17 +24,20 @@ namespace Quest_PDF_Testing.Sections
                 column.Item().PaddingBottom(Constants.PADDING_2).Text(Body.Title).FontSize(Constants.TITLE_FONT_SIZE_30).FontColor(Color.FromHex(Constants.RED_COLOR_HEX));
                 
                 var keyValuePairs = Body.KeyValuePair.Where(item => item.IsDisplayed).ToList();
-                if (IsHalfPageOnly)
+                if (IsHalfPageOnly || View == ContentView.ListView)
                 {
                     column.Item().EnsureSpace().Element(c => RenderKeyValuePairs(c, keyValuePairs));
                 }
                 else
                 {
-                    column.Item().EnsureSpace().Row(row =>
+                    if (View == ContentView.GridView)
                     {
-                        row.RelativeItem(1).Element(c => RenderKeyValuePairs(c, keyValuePairs.Take(keyValuePairs.Count / 2)));
-                        row.RelativeItem(1).Element(c => RenderKeyValuePairs(c, keyValuePairs.Skip(keyValuePairs.Count / 2)));
-                    });
+                        column.Item().EnsureSpace().Row(row =>
+                        {
+                            row.RelativeItem(1).Element(c => RenderKeyValuePairs(c, keyValuePairs.Take(keyValuePairs.Count / 2)));
+                            row.RelativeItem(1).Element(c => RenderKeyValuePairs(c, keyValuePairs.Skip(keyValuePairs.Count / 2)));
+                        });
+                    }
                 }
             });
         }
