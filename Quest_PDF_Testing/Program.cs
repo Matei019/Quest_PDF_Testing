@@ -8,18 +8,42 @@ using Quest_PDF_Testing.Helpers;
 // set your license here:
 QuestPDF.Settings.License = LicenseType.Community;
 
+
+List<SectionBody> bodySections =
+[
+    (SectionBody)BuildBodySection1(isHalfPageOnly: false, shouldKeepContentOnSamePage: true, view: ContentView.GridView),
+    (SectionBody)BuildBodySection2(isHalfPageOnly: true, shouldKeepContentOnSamePage: true),
+    (SectionBody)BuildBodySection3(isHalfPageOnly: true, shouldKeepContentOnSamePage: true),
+    (SectionBody)BuildBodySection4(isHalfPageOnly: true, shouldKeepContentOnSamePage: false),
+    (SectionBody)BuildBodySection3(isHalfPageOnly: false, shouldKeepContentOnSamePage: false, view: ContentView.ListView),
+    (SectionBody)BuildBodySection2(isHalfPageOnly: true, shouldKeepContentOnSamePage: false)
+];
+List<SectionResults> resultsSection =
+[
+    (SectionResults)BuildResultsSection1(isHalfPageOnly: false, shouldKeepContentOnSamePage: false, view: ResultsView.HighlightedAndListView),
+    (SectionResults)BuildResultsSection1(isHalfPageOnly: true, shouldKeepContentOnSamePage: false),
+    (SectionResults)BuildResultsSection1(isHalfPageOnly: true, shouldKeepContentOnSamePage: true, view: ResultsView.HighlightedOnlyView),
+    (SectionResults)BuildResultsSection1(isHalfPageOnly: false, shouldKeepContentOnSamePage: false, contentView: ContentView.GridView),
+    (SectionResults)BuildResultsSection1(isHalfPageOnly: false, shouldKeepContentOnSamePage: false),
+    (SectionResults)BuildResultsSection2(isHalfPageOnly: false, shouldKeepContentOnSamePage: true, view: ResultsView.HighlightedOnlyView)
+];
+
 List<PlacedSection> sections =
 [
     new PlacedSection { Component = BuildTitleSection() },
-    new PlacedSection { Component = BuildBodySection1(false, true, ContentView.GridView), Anchor = SectionAnchor.FullWidth },
-    new PlacedSection { Component = BuildBodySection2(isHalfPageOnly: true, shouldKeepContentOnSamePage: true), Anchor = SectionAnchor.Left},
-    new PlacedSection { Component = BuildBodySection3(isHalfPageOnly: true, shouldKeepContentOnSamePage: true), Anchor = SectionAnchor.Right },
-    new PlacedSection { Component = BuildBodySection4(isHalfPageOnly: true, shouldKeepContentOnSamePage: false), Anchor = SectionAnchor.Left },
-    new PlacedSection { Component = BuildBodySection3(isHalfPageOnly: false, shouldKeepContentOnSamePage: false, view: ContentView.ListView),
-                        Anchor = SectionAnchor.FullWidth },
-    new PlacedSection { Component = BuildBodySection2(isHalfPageOnly: true, shouldKeepContentOnSamePage: false), Anchor = SectionAnchor.Right }
+    new PlacedSection { Component = bodySections[0], DoesCoverFullPage = !bodySections[0].IsHalfPageOnly },
+    new PlacedSection { Component = bodySections[1], Anchor = SectionAnchor.Left, DoesCoverFullPage = !bodySections[1].IsHalfPageOnly },
+    new PlacedSection { Component = bodySections[2], Anchor = SectionAnchor.Right, DoesCoverFullPage = !bodySections[2].IsHalfPageOnly },
+    new PlacedSection { Component = bodySections[3], Anchor = SectionAnchor.Left, DoesCoverFullPage = !bodySections[3].IsHalfPageOnly },
+    new PlacedSection { Component = bodySections[4], DoesCoverFullPage = !bodySections[4].IsHalfPageOnly },
+    new PlacedSection { Component = bodySections[5], Anchor = SectionAnchor.Right, DoesCoverFullPage = !bodySections[5].IsHalfPageOnly },
+    new PlacedSection { Component = resultsSection[0], DoesCoverFullPage = !resultsSection[0].IsHalfPageOnly },
+    new PlacedSection { Component = resultsSection[1], Anchor = SectionAnchor.Left, DoesCoverFullPage = !resultsSection[1].IsHalfPageOnly },
+    new PlacedSection { Component = resultsSection[2], Anchor = SectionAnchor.Right, DoesCoverFullPage = !resultsSection[2].IsHalfPageOnly },
+    new PlacedSection { Component = resultsSection[3], DoesCoverFullPage = !resultsSection[3].IsHalfPageOnly },
+    new PlacedSection { Component = resultsSection[4], DoesCoverFullPage = !resultsSection[4].IsHalfPageOnly },
+    new PlacedSection { Component = resultsSection[5], DoesCoverFullPage = !resultsSection[5].IsHalfPageOnly }
 ];
-int sectionsSize = sections.Count;
 
 
 Document.Create(container =>
@@ -37,7 +61,7 @@ Document.Create(container =>
             List<PlacedSection> halfPageSections = [];
             foreach (var section in sections)
             {
-                bool coversFullPageWidth = section.Component is SectionTitle || section.Anchor == SectionAnchor.FullWidth;
+                bool coversFullPageWidth = section.Component is SectionTitle || section.DoesCoverFullPage;
                 if (coversFullPageWidth)
                 {
                     column.Item().Element(c => RenderHalfPageComponents(c, halfPageSections));
@@ -63,7 +87,7 @@ static void RenderHalfPageComponents(IContainer container, List<PlacedSection> s
     {
         column.Item().Row(row =>
         {
-            row.RelativeItem().Column(leftColumn =>
+            row.RelativeItem().PaddingRight(Constants.PADDING_5).Column(leftColumn =>
             {
                 foreach (PlacedSection leftSection in sections.Where(section => section.Anchor == SectionAnchor.Left))
                     leftColumn.Item().Component(leftSection.Component);
@@ -92,7 +116,7 @@ static IComponent BuildTitleSection()
         HasControlSucceded = true
     };
 
-    var section = new SectionTitle
+    SectionTitle section = new()
     {
         Title = titleItem
     };
@@ -118,11 +142,11 @@ static IComponent BuildBodySection1(bool isHalfPageOnly, bool shouldKeepContentO
             new KeyValueItem { Key = "Material density", Value = "1.27 g/cm³", IsDisplayed = true },
             new KeyValueItem { Key = "Start date", Value = "2026-03-06", IsDisplayed = true },
             new KeyValueItem { Key = "Duration", Value = "10 min 23 s", IsDisplayed = true },
-            new KeyValueItem { Key = "Label", Value = "label1, label 2", IsDisplayed = true }
+            new KeyValueItem { Key = "Label", Value = "label1, label2", IsDisplayed = true }
         ]
     };
 
-    var section = new SectionBody
+    SectionBody section = new()
     {
         Body = bodyItem,
         IsHalfPageOnly = isHalfPageOnly,
@@ -151,11 +175,11 @@ static IComponent BuildBodySection2(bool isHalfPageOnly, bool shouldKeepContentO
             new KeyValueItem { Key = "Material density", Value = "1.27 g/cm³", IsDisplayed = false },
             new KeyValueItem { Key = "Start date", Value = "2026-03-06", IsDisplayed = false },
             new KeyValueItem { Key = "Duration", Value = "10 min 23 s", IsDisplayed = false },
-            new KeyValueItem { Key = "Label", Value = "label1, label 2", IsDisplayed = true }
+            new KeyValueItem { Key = "Label", Value = "label1, label2", IsDisplayed = true }
         ]
     };
 
-    var section = new SectionBody
+    SectionBody section = new()
     {
         Body = bodyItem,
         IsHalfPageOnly = isHalfPageOnly,
@@ -187,7 +211,7 @@ static IComponent BuildBodySection3(bool isHalfPageOnly, bool shouldKeepContentO
         ]
     };
 
-    var section = new SectionBody
+    SectionBody section = new()
     {
         Body = bodyItem,
         IsHalfPageOnly = isHalfPageOnly,
@@ -216,16 +240,83 @@ static IComponent BuildBodySection4(bool isHalfPageOnly, bool shouldKeepContentO
             new KeyValueItem { Key = "Material density", Value = "1.27 g/cm³", IsDisplayed = true },
             new KeyValueItem { Key = "Start date", Value = "2026-03-06", IsDisplayed = true },
             new KeyValueItem { Key = "Duration", Value = "10 min 23 s", IsDisplayed = true },
-            new KeyValueItem { Key = "Label", Value = "label1, label 2", IsDisplayed = true }
+            new KeyValueItem { Key = "Label", Value = "label1, label2", IsDisplayed = true }
         ]
     };
 
-    var section = new SectionBody
+    SectionBody section = new()
     {
         Body = bodyItem,
         IsHalfPageOnly = isHalfPageOnly,
         ShouldKeepContentOnSamePage = shouldKeepContentOnSamePage,
         View = view
+    };
+
+    return section;
+}
+
+static IComponent BuildResultsSection1
+    (bool isHalfPageOnly,
+    bool shouldKeepContentOnSamePage,
+    ResultsView view = ResultsView.ListView,
+    ContentView contentView = ContentView.ListView)
+{
+    ResultsItem resultsItem = new()
+    {
+        Title = "Results",
+        KeyValueResultPair =
+        [
+            new KeyValueItemResult { Key = "Moisture", Value = "11.7650 g", IsDisplayed = true, IsHighlightedItem = true },
+            new KeyValueItemResult { Key = "Absolute moisture", Value = "235.3184 g", IsDisplayed = true, IsHighlightedItem = true },
+            new KeyValueItemResult { Key = "Standard deviation (density)", Value = "0.0002 g/cm³", IsDisplayed = true, IsHighlightedItem = true },
+            new KeyValueItemResult { Key = "Average volume", Value = "39.1542 g/cm³", IsDisplayed = true, IsHighlightedItem = false },
+            new KeyValueItemResult { Key = "True density", Value = "2.1305 g/cm³", IsDisplayed = true, IsHighlightedItem = false },
+            new KeyValueItemResult { Key = "Standard deviation (volume)", Value = "0.0003 g/cm³", IsDisplayed = true, IsHighlightedItem = true }
+        ]
+    };
+
+    SectionResults section = new()
+    {
+        Results = resultsItem,
+        IsHalfPageOnly = isHalfPageOnly,
+        ShouldKeepContentOnSamePage = shouldKeepContentOnSamePage,
+        View = view,
+        Content = contentView
+    };
+
+    return section;
+}
+
+static IComponent BuildResultsSection2
+    (bool isHalfPageOnly,
+    bool shouldKeepContentOnSamePage,
+    ResultsView view = ResultsView.ListView,
+    ContentView contentView = ContentView.ListView)
+{
+    ResultsItem resultsItem = new()
+    {
+        Title = "Results",
+        KeyValueResultPair =
+        [
+            new KeyValueItemResult { Key = "Moisture", Value = "11.7650 g", IsDisplayed = true, IsHighlightedItem = true },
+            new KeyValueItemResult { Key = "Absolute moisture", Value = "235.3184 g", IsDisplayed = true, IsHighlightedItem = true },
+            new KeyValueItemResult { Key = "Standard deviation (density)", Value = "0.0002 g/cm³", IsDisplayed = true, IsHighlightedItem = true },
+            new KeyValueItemResult { Key = "Average volume", Value = "39.1542 g/cm³", IsDisplayed = true, IsHighlightedItem = false },
+            new KeyValueItemResult { Key = "True density", Value = "2.1305 g/cm³", IsDisplayed = true, IsHighlightedItem = false },
+            new KeyValueItemResult { Key = "Standard deviation (volume)", Value = "0.0003 g/cm³", IsDisplayed = true, IsHighlightedItem = true },
+            new KeyValueItemResult { Key = "Standard deviation (volume)", Value = "0.0003 g/cm³", IsDisplayed = true, IsHighlightedItem = true },
+            new KeyValueItemResult { Key = "Standard deviation (volume)", Value = "0.0003 g/cm³", IsDisplayed = true, IsHighlightedItem = true },
+            new KeyValueItemResult { Key = "Standard deviation (volume)", Value = "0.0003 g/cm³", IsDisplayed = true, IsHighlightedItem = true },
+        ]
+    };
+
+    SectionResults section = new()
+    {
+        Results = resultsItem,
+        IsHalfPageOnly = isHalfPageOnly,
+        ShouldKeepContentOnSamePage = shouldKeepContentOnSamePage,
+        View = view,
+        Content = contentView
     };
 
     return section;

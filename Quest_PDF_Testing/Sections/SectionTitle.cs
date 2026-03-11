@@ -16,7 +16,7 @@ namespace Quest_PDF_Testing.Sections
 
         public void Compose(IContainer container)
         {
-            container.PaddingBottom(Constants.PADDING_15).Column(column =>
+            container.ShowEntire().PaddingBottom(Constants.PADDING_15).Column(column =>
             {
                 column.Item().Text(Title.Title).FontSize(Constants.TITLE_FONT_SIZE_30).FontColor(Color.FromHex(Constants.RED_COLOR_HEX));
                 column.Item().AlignLeft().Row(row =>

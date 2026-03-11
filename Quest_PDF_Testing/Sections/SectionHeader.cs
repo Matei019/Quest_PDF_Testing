@@ -20,7 +20,6 @@ namespace Quest_PDF_Testing.Sections
             {
                 column.Item().Layers(layers =>
                 {
-                    //layers.Layer().AlignRight().PaddingRight(100).Image(Placeholders.Image(200, 100)).FitHeight();
                     layers.Layer().AlignRight().MaxHeight(Header.ImageMaxHeight).MaxWidth(Header.ImageMaxWidth).Image(Header.ImagePath).FitArea();
 
                     layers.PrimaryLayer().Column(layerColumn =>

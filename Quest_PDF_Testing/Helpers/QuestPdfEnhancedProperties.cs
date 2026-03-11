@@ -5,9 +5,9 @@ namespace Quest_PDF_Testing.Helpers
 {
     public static class QuestPdfEnhancedProperties
     {
-        public static IContainer ShowEntireIf(this IContainer container, bool shouldBreakPage)
+        public static IContainer PreventPageBreakIf(this IContainer container, bool shouldBreakPage)
         {
-            return shouldBreakPage ? container.ShowEntire() : container;
+            return shouldBreakPage ? container.PreventPageBreak() : container;
         }
     }
 }

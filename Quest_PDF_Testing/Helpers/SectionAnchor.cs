@@ -3,7 +3,6 @@
     public enum SectionAnchor
     {
         Left,
-        Right,
-        FullWidth
+        Right
     }
 }
