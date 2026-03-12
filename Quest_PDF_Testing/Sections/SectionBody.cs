@@ -21,7 +21,8 @@ namespace Quest_PDF_Testing.Sections
         {
             container.PreventPageBreakIf(ShouldKeepContentOnSamePage).PaddingBottom(Constants.PADDING_15).Column(column =>
             {
-                column.Item().PaddingBottom(Constants.PADDING_2).Text(Body.Title).FontSize(Constants.TITLE_FONT_SIZE_30).FontColor(Color.FromHex(Constants.RED_COLOR_HEX));
+                column.Item().PaddingBottom(Constants.PADDING_2).Text(Body.Title).FontSize(Constants.TITLE_FONT_SIZE_30)
+                    .FontColor(Color.FromHex(Constants.RED_COLOR_HEX));
 
                 var keyValuePairs = Body.KeyValuePair.Where(item => item.IsDisplayed).ToList();
                 if (IsHalfPageOnly || View == ContentView.ListView)

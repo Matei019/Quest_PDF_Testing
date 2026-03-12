@@ -18,20 +18,20 @@ namespace Quest_PDF_Testing.Sections
         {
             container.BorderTop(Constants.BORDER_1).BorderColor(Color.FromHex(Constants.GRAY_COLOR_HEX)).Column(column =>
             {
-                column.Item().PaddingTop(Constants.PADDING_10).Layers(layers =>
+                column.Item().ExtendHorizontal().PaddingTop(Constants.PADDING_10).Layers(layers =>
                 {
                     layers.Layer().AlignRight().AlignBottom().Text(x =>
                     {
-                        x.Span("Page ").FontColor(Color.FromHex(Constants.GRAY_COLOR_HEX));
-                        x.CurrentPageNumber().FontColor(Color.FromHex(Constants.GRAY_COLOR_HEX));
-                        x.Span(" of ").FontColor(Color.FromHex(Constants.GRAY_COLOR_HEX));
-                        x.TotalPages().FontColor(Color.FromHex(Constants.GRAY_COLOR_HEX));
+                        x.Span("Page ").FontSize(Constants.TEXT_FONT_SIZE_10).FontColor(Color.FromHex(Constants.GRAY_COLOR_HEX));
+                        x.CurrentPageNumber().FontSize(Constants.TEXT_FONT_SIZE_10).FontColor(Color.FromHex(Constants.GRAY_COLOR_HEX));
+                        x.Span(" of ").FontSize(Constants.TEXT_FONT_SIZE_10).FontColor(Color.FromHex(Constants.GRAY_COLOR_HEX));
+                        x.TotalPages().FontSize(Constants.TEXT_FONT_SIZE_10).FontColor(Color.FromHex(Constants.GRAY_COLOR_HEX));
                     });
 
                     layers.PrimaryLayer().AlignLeft().Column(layerColumn =>
                     {
-                        layerColumn.Item().AlignLeft().Text(Footer.ExportInfo).FontColor(Color.FromHex(Constants.GRAY_COLOR_HEX));
-                        layerColumn.Item().AlignLeft().Text(Footer.CompanySite).FontColor(Color.FromHex(Constants.GRAY_COLOR_HEX));
+                        layerColumn.Item().AlignLeft().Text(Footer.ExportInfo).FontSize(Constants.TEXT_FONT_SIZE_10).FontColor(Color.FromHex(Constants.GRAY_COLOR_HEX));
+                        layerColumn.Item().AlignLeft().Text(Footer.CompanySite).FontSize(Constants.TEXT_FONT_SIZE_10).FontColor(Color.FromHex(Constants.GRAY_COLOR_HEX));
                     });
                 });
             });

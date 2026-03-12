@@ -9,5 +9,10 @@ namespace Quest_PDF_Testing.Helpers
         {
             return shouldBreakPage ? container.PreventPageBreak() : container;
         }
+
+        public static IContainer AlignAndPaddingLeftOrRight(this IContainer container, bool shouldAlignLeft, float horizontalPadding)
+        {
+            return shouldAlignLeft ? container.AlignLeft().PaddingLeft(horizontalPadding) : container.AlignRight().PaddingRight(horizontalPadding);
+        }
     }
 }

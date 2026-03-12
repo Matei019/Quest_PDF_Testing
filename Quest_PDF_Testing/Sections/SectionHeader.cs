@@ -8,6 +8,9 @@ namespace Quest_PDF_Testing.Sections
     public class SectionHeader : IComponent
     {
         public HeaderItem Header { get; set; }
+        public bool IsLogoAlignedLeft { get; set; } = false;
+        public float LogoPaddingTop { get; set; } = 0f;
+        public float LogoPaddingHorizontal { get; set; } = 0f;
 
         public SectionHeader()
         {
@@ -18,11 +21,12 @@ namespace Quest_PDF_Testing.Sections
         {
             container.PaddingBottom(Constants.PADDING_1, Unit.Centimetre).Column(column =>
             {
-                column.Item().Layers(layers =>
+                column.Item().AlignTop().ExtendHorizontal().Layers(layers =>
                 {
-                    layers.Layer().AlignRight().MaxHeight(Header.ImageMaxHeight).MaxWidth(Header.ImageMaxWidth).Image(Header.ImagePath).FitArea();
+                    layers.PrimaryLayer().AlignAndPaddingLeftOrRight(IsLogoAlignedLeft, LogoPaddingHorizontal).PaddingTop(LogoPaddingTop)
+                        .MaxHeight(Header.ImageMaxHeight).MaxWidth(Header.ImageMaxWidth).Image(Header.ImagePath).FitArea();
 
-                    layers.PrimaryLayer().Column(layerColumn =>
+                    layers.Layer().Column(layerColumn =>
                     {
                         layerColumn.Item().AlignLeft().Text(Header.Title1).FontSize(Constants.TEXT_FONT_SIZE_10);
                         layerColumn.Item().AlignLeft().Text(Header.Title2).FontSize(Constants.TEXT_FONT_SIZE_10);

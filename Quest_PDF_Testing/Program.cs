@@ -42,7 +42,8 @@ List<PlacedSection> sections =
     new PlacedSection { Component = resultsSection[2], Anchor = SectionAnchor.Right, DoesCoverFullPage = !resultsSection[2].IsHalfPageOnly },
     new PlacedSection { Component = resultsSection[3], DoesCoverFullPage = !resultsSection[3].IsHalfPageOnly },
     new PlacedSection { Component = resultsSection[4], DoesCoverFullPage = !resultsSection[4].IsHalfPageOnly },
-    new PlacedSection { Component = resultsSection[5], DoesCoverFullPage = !resultsSection[5].IsHalfPageOnly }
+    new PlacedSection { Component = resultsSection[5], DoesCoverFullPage = !resultsSection[5].IsHalfPageOnly },
+    new PlacedSection { Component = BuildImageSection(10f, 15f, "Content_Image_Placeholder.png") }
 ];
 
 
@@ -53,15 +54,15 @@ Document.Create(container =>
         page.Size(PageSizes.A4);
         page.Margin(Constants.BORDER_2, Unit.Centimetre);
 
-        page.Header().AlignTop().ExtendHorizontal().Component(new SectionHeader());
-        page.Footer().Component(new SectionFooter());
+        page.Header().Component(BuildHeaderSection(50f, 100f, 0f, 0f, "Header_Image_Placeholder.png"));
+        page.Footer().Component(BuildFooterSection());
 
         page.Content().Column(column =>
         {
             List<PlacedSection> halfPageSections = [];
             foreach (var section in sections)
             {
-                bool coversFullPageWidth = section.Component is SectionTitle || section.DoesCoverFullPage;
+                bool coversFullPageWidth = section.Component is SectionTitle || section.Component is SectionImage || section.DoesCoverFullPage;
                 if (coversFullPageWidth)
                 {
                     column.Item().Element(c => RenderHalfPageComponents(c, halfPageSections));
@@ -71,7 +72,8 @@ Document.Create(container =>
                     halfPageSections.Add(section);
             }
 
-            column.Item().Element(c => RenderHalfPageComponents(c, halfPageSections));
+            if (halfPageSections.Count > 0)
+                column.Item().Element(c => RenderHalfPageComponents(c, halfPageSections));
         });
     });
 })
@@ -102,6 +104,46 @@ static void RenderHalfPageComponents(IContainer container, List<PlacedSection> s
     });
 
     sections.Clear();
+}
+
+
+static IComponent BuildHeaderSection(float maxHeight, float maxWidth, float logoTopPadding, float logoHorizontalPadding, string imageName)
+{
+    HeaderItem headerItem = new()
+    {
+        Title1 = "Company name 1",
+        Title2 = "Company name 2",
+        Country = "Company country",
+        ImagePath = Path.Combine(AppContext.BaseDirectory, imageName),
+        ImageMaxHeight = maxHeight,
+        ImageMaxWidth = maxWidth
+    };
+
+    SectionHeader section = new()
+    {
+        Header = headerItem,
+        IsLogoAlignedLeft = false,
+        LogoPaddingTop = logoTopPadding,
+        LogoPaddingHorizontal = logoHorizontalPadding
+    };
+
+    return section;
+}
+
+static IComponent BuildFooterSection()
+{
+    FooterItem footerItem = new()
+    {
+        ExportInfo = "Exported on 12/3/2026 12:06:18 PM by John Doe",
+        CompanySite = "www.company-site.com"
+    };
+
+    SectionFooter section = new()
+    {
+        Footer = footerItem
+    };
+
+    return section;
 }
 
 static IComponent BuildTitleSection()
@@ -317,6 +359,24 @@ static IComponent BuildResultsSection2
         ShouldKeepContentOnSamePage = shouldKeepContentOnSamePage,
         View = view,
         Content = contentView
+    };
+
+    return section;
+}
+
+static IComponent BuildImageSection(float height, float width, string imageName)
+{
+    ImageItem imageItem = new()
+    {
+        Title = "Moisture over time",
+        ImagePath = Path.Combine(AppContext.BaseDirectory, imageName)
+    };
+
+    SectionImage section = new()
+    {
+        Image = imageItem,
+        Height = height,
+        Width = width
     };
 
     return section;
