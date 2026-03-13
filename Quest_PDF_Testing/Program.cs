@@ -18,7 +18,7 @@ List<SectionBody> bodySections =
     (SectionBody)BuildBodySection3(isHalfPageOnly: false, shouldKeepContentOnSamePage: false, view: ContentView.ListView),
     (SectionBody)BuildBodySection2(isHalfPageOnly: true, shouldKeepContentOnSamePage: false)
 ];
-List<SectionResults> resultsSection =
+List<SectionResults> resultsSections =
 [
     (SectionResults)BuildResultsSection1(isHalfPageOnly: false, shouldKeepContentOnSamePage: false, view: ResultsView.HighlightedAndListView),
     (SectionResults)BuildResultsSection1(isHalfPageOnly: true, shouldKeepContentOnSamePage: false),
@@ -26,6 +26,10 @@ List<SectionResults> resultsSection =
     (SectionResults)BuildResultsSection1(isHalfPageOnly: false, shouldKeepContentOnSamePage: false, contentView: ContentView.GridView),
     (SectionResults)BuildResultsSection1(isHalfPageOnly: false, shouldKeepContentOnSamePage: false),
     (SectionResults)BuildResultsSection2(isHalfPageOnly: false, shouldKeepContentOnSamePage: true, view: ResultsView.HighlightedOnlyView)
+];
+List<SectionTable> tableSections =
+[
+    (SectionTable)BuildTableComponent1(isHalfPageOnly: false, shouldKeepContentOnSamePage: true)
 ];
 
 List<PlacedSection> sections =
@@ -37,13 +41,14 @@ List<PlacedSection> sections =
     new PlacedSection { Component = bodySections[3], Anchor = SectionAnchor.Left, DoesCoverFullPage = !bodySections[3].IsHalfPageOnly },
     new PlacedSection { Component = bodySections[4], DoesCoverFullPage = !bodySections[4].IsHalfPageOnly },
     new PlacedSection { Component = bodySections[5], Anchor = SectionAnchor.Right, DoesCoverFullPage = !bodySections[5].IsHalfPageOnly },
-    new PlacedSection { Component = resultsSection[0], DoesCoverFullPage = !resultsSection[0].IsHalfPageOnly },
-    new PlacedSection { Component = resultsSection[1], Anchor = SectionAnchor.Left, DoesCoverFullPage = !resultsSection[1].IsHalfPageOnly },
-    new PlacedSection { Component = resultsSection[2], Anchor = SectionAnchor.Right, DoesCoverFullPage = !resultsSection[2].IsHalfPageOnly },
-    new PlacedSection { Component = resultsSection[3], DoesCoverFullPage = !resultsSection[3].IsHalfPageOnly },
-    new PlacedSection { Component = resultsSection[4], DoesCoverFullPage = !resultsSection[4].IsHalfPageOnly },
-    new PlacedSection { Component = resultsSection[5], DoesCoverFullPage = !resultsSection[5].IsHalfPageOnly },
-    new PlacedSection { Component = BuildImageSection(10f, 15f, "Content_Image_Placeholder.png") }
+    new PlacedSection { Component = resultsSections[0], DoesCoverFullPage = !resultsSections[0].IsHalfPageOnly },
+    new PlacedSection { Component = resultsSections[1], Anchor = SectionAnchor.Left, DoesCoverFullPage = !resultsSections[1].IsHalfPageOnly },
+    new PlacedSection { Component = resultsSections[2], Anchor = SectionAnchor.Right, DoesCoverFullPage = !resultsSections[2].IsHalfPageOnly },
+    new PlacedSection { Component = resultsSections[3], DoesCoverFullPage = !resultsSections[3].IsHalfPageOnly },
+    new PlacedSection { Component = resultsSections[4], DoesCoverFullPage = !resultsSections[4].IsHalfPageOnly },
+    new PlacedSection { Component = resultsSections[5], DoesCoverFullPage = !resultsSections[5].IsHalfPageOnly },
+    new PlacedSection { Component = BuildImageSection(10f, 15f, "Content_Image_Placeholder.png") },
+    new PlacedSection { Component = tableSections[0], DoesCoverFullPage = !tableSections[0].IsHalfPageOnly }
 ];
 
 
@@ -377,6 +382,41 @@ static IComponent BuildImageSection(float height, float width, string imageName)
         Image = imageItem,
         Height = height,
         Width = width
+    };
+
+    return section;
+}
+
+static IComponent BuildTableComponent1(bool isHalfPageOnly, bool shouldKeepContentOnSamePage)
+{
+    List<CellItem> cellItems =
+    [
+        new CellItem { HeaderName = "Run", WidthMm = 12f },
+        new CellItem { HeaderName = "Volume", WidthMm = 30f },
+        new CellItem { HeaderName = "Density", WidthMm = 90f },
+        new CellItem { HeaderName = "Temperature", WidthMm = 40f }
+    ];
+    List<RowItem> rowItems =
+    [
+        new RowItem { Items = ["A", "43.1859 g/cm³", "2.1445 g/cm³", "24.01 °C"] },
+        new RowItem { Items = ["B", "43.1835 g/cm³", "2.1433 g/cm³", "24.02 °C"] },
+        new RowItem { Items = ["C", "43.1875 g/cm³", "2.1412 g/cm³", "24.03 °C"] },
+        new RowItem { Items = ["D", "43.1823 g/cm³", "2.1439 g/cm³", "24.04 °C"] }
+    ];
+
+    TableItem tableItem = new()
+    {
+        Title = "Run data",
+        CellItems = cellItems,
+        Rows = rowItems
+    };
+
+    SectionTable section = new()
+    {
+        Table = tableItem,
+        IsHalfPageOnly = isHalfPageOnly,
+        ShouldKeepContentOnSamePage = shouldKeepContentOnSamePage,
+        AvailableWidth = PageSizes.A4.Width - (Constants.BORDER_2 * Constants.ONE_CM_IN_POINTS) * 2
     };
 
     return section;

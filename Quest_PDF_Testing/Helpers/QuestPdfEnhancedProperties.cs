@@ -14,5 +14,15 @@ namespace Quest_PDF_Testing.Helpers
         {
             return shouldAlignLeft ? container.AlignLeft().PaddingLeft(horizontalPadding) : container.AlignRight().PaddingRight(horizontalPadding);
         }
+
+        public static IContainer BackgroundTableRows(this IContainer container, int rowIndex)
+        {
+            return rowIndex % 2 == 1 ? container.Background(Color.FromHex(Constants.ODD_TABLE_ROWS_BACKGROUND_COLOR)) : container;
+        }
+
+        public static IContainer BorderBottomForLastTableRow(this IContainer container, bool isLastTableRow)
+        {
+            return isLastTableRow ? container.BorderBottom(Constants.BORDER_2).BorderColor(Color.FromHex(Constants.RED_COLOR_HEX)) : container;
+        }
     }
 }
