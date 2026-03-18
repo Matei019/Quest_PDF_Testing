@@ -29,7 +29,10 @@ List<SectionResults> resultsSections =
 ];
 List<SectionTable> tableSections =
 [
-    (SectionTable)BuildTableComponent1(isHalfPageOnly: false, shouldKeepContentOnSamePage: true)
+    (SectionTable)BuildTableComponent1(isHalfPageOnly: false, shouldKeepContentOnSamePage: true),
+    (SectionTable)BuildTableComponent2(isHalfPageOnly: false, shouldKeepContentOnSamePage: true),
+    (SectionTable)BuildTableComponent1(isHalfPageOnly: true, shouldKeepContentOnSamePage: false),
+    (SectionTable)BuildTableComponent3(isHalfPageOnly: true, shouldKeepContentOnSamePage: false)
 ];
 
 List<PlacedSection> sections =
@@ -48,7 +51,10 @@ List<PlacedSection> sections =
     new PlacedSection { Component = resultsSections[4], DoesCoverFullPage = !resultsSections[4].IsHalfPageOnly },
     new PlacedSection { Component = resultsSections[5], DoesCoverFullPage = !resultsSections[5].IsHalfPageOnly },
     new PlacedSection { Component = BuildImageSection(10f, 15f, "Content_Image_Placeholder.png") },
-    new PlacedSection { Component = tableSections[0], DoesCoverFullPage = !tableSections[0].IsHalfPageOnly }
+    new PlacedSection { Component = tableSections[0], DoesCoverFullPage = !tableSections[0].IsHalfPageOnly },
+    new PlacedSection { Component = tableSections[1], DoesCoverFullPage = !tableSections[1].IsHalfPageOnly },
+    new PlacedSection { Component = tableSections[2], Anchor = SectionAnchor.Left, DoesCoverFullPage = !tableSections[2].IsHalfPageOnly },
+    new PlacedSection { Component = tableSections[3], Anchor = SectionAnchor.Right, DoesCoverFullPage = !tableSections[3].IsHalfPageOnly }
 ];
 
 
@@ -393,6 +399,42 @@ static IComponent BuildTableComponent1(bool isHalfPageOnly, bool shouldKeepConte
     [
         new CellItem { HeaderName = "Run", WidthMm = 12f },
         new CellItem { HeaderName = "Volume", WidthMm = 30f },
+        new CellItem { HeaderName = "Density", WidthMm = 30f },
+        new CellItem { HeaderName = "Temperature", WidthMm = 40f }
+    ];
+    List<RowItem> rowItems =
+    [
+        new RowItem { Items = ["A", "43.1859 g/cm³", "2.1445 g/cm³", "24.01 °C"] },
+        new RowItem { Items = ["B", "43.1835 g/cm³", "2.1433 g/cm³", "24.02 °C"] },
+        new RowItem { Items = ["C", "43.1875 g/cm³", "2.1412 g/cm³", "24.03 °C"] },
+        new RowItem { Items = ["D", "43.1823 g/cm³", "2.1439 g/cm³", "24.04 °C"] }
+    ];
+
+    TableItem tableItem = new()
+    {
+        Title = "Run data",
+        CellItems = cellItems,
+        Rows = rowItems
+    };
+
+    SectionTable section = new()
+    {
+        Table = tableItem,
+        IsHalfPageOnly = isHalfPageOnly,
+        ShouldKeepContentOnSamePage = shouldKeepContentOnSamePage,
+        PageWidth = PageSizes.A4.Width,
+        PageHorizontalSpacing = (Constants.BORDER_2 * Constants.ONE_CM_IN_POINTS) * 2
+    };
+
+    return section;
+}
+
+static IComponent BuildTableComponent2(bool isHalfPageOnly, bool shouldKeepContentOnSamePage)
+{
+    List<CellItem> cellItems =
+    [
+        new CellItem { HeaderName = "Run", WidthMm = 12f },
+        new CellItem { HeaderName = "Volume", WidthMm = 30f },
         new CellItem { HeaderName = "Density", WidthMm = 90f },
         new CellItem { HeaderName = "Temperature", WidthMm = 40f }
     ];
@@ -416,7 +458,42 @@ static IComponent BuildTableComponent1(bool isHalfPageOnly, bool shouldKeepConte
         Table = tableItem,
         IsHalfPageOnly = isHalfPageOnly,
         ShouldKeepContentOnSamePage = shouldKeepContentOnSamePage,
-        AvailableWidth = PageSizes.A4.Width - (Constants.BORDER_2 * Constants.ONE_CM_IN_POINTS) * 2
+        PageWidth = PageSizes.A4.Width,
+        PageHorizontalSpacing = (Constants.BORDER_2 * Constants.ONE_CM_IN_POINTS) * 2
+    };
+
+    return section;
+}
+
+static IComponent BuildTableComponent3(bool isHalfPageOnly, bool shouldKeepContentOnSamePage)
+{
+    List<CellItem> cellItems =
+    [
+        new CellItem { HeaderName = "Run", WidthMm = 12f },
+        new CellItem { HeaderName = "Temperature", WidthMm = 40f }
+    ];
+    List<RowItem> rowItems =
+    [
+        new RowItem { Items = ["A", "24.01 °C"] },
+        new RowItem { Items = ["B", "24.02 °C"] },
+        new RowItem { Items = ["C", "24.03 °C"] },
+        new RowItem { Items = ["D", "24.04 °C"] }
+    ];
+
+    TableItem tableItem = new()
+    {
+        Title = "Run data",
+        CellItems = cellItems,
+        Rows = rowItems
+    };
+
+    SectionTable section = new()
+    {
+        Table = tableItem,
+        IsHalfPageOnly = isHalfPageOnly,
+        ShouldKeepContentOnSamePage = shouldKeepContentOnSamePage,
+        PageWidth = PageSizes.A4.Width,
+        PageHorizontalSpacing = (Constants.BORDER_2 * Constants.ONE_CM_IN_POINTS) * 2
     };
 
     return section;

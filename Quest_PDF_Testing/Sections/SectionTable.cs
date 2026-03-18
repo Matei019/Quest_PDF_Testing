@@ -3,7 +3,6 @@ using Quest_PDF_Testing.Models;
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
-using System.Data;
 
 namespace Quest_PDF_Testing.Sections
 {
@@ -12,7 +11,9 @@ namespace Quest_PDF_Testing.Sections
         public TableItem Table { get; set; }
         public bool IsHalfPageOnly { get; set; } = false;
         public bool ShouldKeepContentOnSamePage { get; set; } = false;
-        public float AvailableWidth { get; set; } = PageSizes.A4.Width;
+        public float PageWidth { get; set; } = PageSizes.A4.Width;
+        public float PageHorizontalSpacing { get; set; } = 0f;
+        private float AvailableWidth = PageSizes.A4.Width;
 
         public SectionTable()
         {
@@ -21,6 +22,11 @@ namespace Quest_PDF_Testing.Sections
 
         public void Compose(IContainer container)
         {
+            if (IsHalfPageOnly)
+                AvailableWidth = PageWidth / 2 - PageHorizontalSpacing;
+            else
+                AvailableWidth = PageWidth - PageHorizontalSpacing;
+
             container.PreventPageBreakIf(ShouldKeepContentOnSamePage).MaxWidth(AvailableWidth).PaddingBottom(Constants.PADDING_15).Column(column =>
             {
                 column.Item().PaddingBottom(Constants.PADDING_2).Text(Table.Title).FontSize(Constants.TITLE_FONT_SIZE_30)
